@@ -1,0 +1,45 @@
+---
+title: "Final Project Proposal"
+author: 'Brandon Ly, Alejandro Cepeda, Brandon Dora, Benjamin Garcia'
+date: 'April 10th, 2022'
+output: html_document
+---
+
+---
+
+# Proposals  
+
+The data set in which we are choosing revolves around the forest fires that 
+happened in California from 2013 to 2020.
+
+### Predicting Correlation Using SVM & LM
+Portion done by: Brandon Ly  
+
+Brandon will be using both SVM and linear modeling in order to see if ML could
+predict if the fire were major or not using acres burned, and which season the
+fire took place in.  
+
+The purpose of his experiment is to see if the season (spring, winter, etc) has a 
+correlation to the acres burned. So by using ML, if the models accurately 
+predict if the fires were considered to be major using the seasons, it could 
+possibly mean there is a correlation to be made.
+
+Using RMSE, alike what we did in module 10, we could compare the RMSE of both the
+linear and support vector machine models to see which model were better, by 
+doing so having multiple 'opinions' on the matter would be beneficial.  
+
+
+
+
+
+---
+
+# Dataset
+
+The data set our group will be working with can be found [here](https://www.kaggle.com/datasets/ananthu017/california-wildfire-incidents-20132020?select=California_Fire_Incidents.csv)  
+
+```{r message=FALSE, collapse=TRUE, paged.print=TRUE}
+dataset <- read.csv("California_Fire_Incidents.csv")
+head(dataset)
+```
+

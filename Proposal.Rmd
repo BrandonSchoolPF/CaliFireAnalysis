@@ -32,9 +32,9 @@ doing so having multiple 'opinions' on the matter would be beneficial.
 ### Creating Density Maps to Visualize Occurences
 Portion done by: Brandon Dora
 
-This portion of the project will be taking the dataset and creating multiple geographical
+This portion of the project will be centered around taking the dataset and creating multiple geographical
 representations of the data, that will not only provide a better look at the data itself, 
-but will allow the viewer to infer where wildfires may more likely occur. 
+but will also allow the viewer to infer where these fires are more likely to occur. 
 
 Referring back to what was accomplished in module 4, using ggmap, along with a few 
 other packages, we are able to visualize our data by geographically mapping where these 

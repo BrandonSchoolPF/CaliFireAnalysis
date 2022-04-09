@@ -7,51 +7,68 @@ output: html_document
 
 ---
 
-# Proposals  
+# Proposals
 
 The data set in which we are choosing revolves around the forest fires that 
 happened in California from 2013 to 2020.
 
 ### Predicting Correlation Using SVM & LM
-Portion done by: Brandon Ly  
 
-Brandon will be using both SVM and linear modeling in order to see if ML could
-predict if the fire were major or not using acres burned, and which season the
-fire took place in.  
+Portion done by: Brandon Ly
+
+Brandon will be using both SVM and linear modeling in order to see if ML could 
+predict if the fire were major or not using acres burned, and which season the 
+fire took place in.
 
 The purpose of his experiment is to see if the season (spring, winter, etc) has a 
 correlation to the acres burned. So by using ML, if the models accurately 
 predict if the fires were considered to be major using the seasons, it could 
 possibly mean there is a correlation to be made.
 
-Using RMSE, alike what we did in module 10, we could compare the RMSE of both the
+Using RMSE, alike what we did in module 10, we could compare the RMSE of both the 
 linear and support vector machine models to see which model were better, by 
-doing so having multiple 'opinions' on the matter would be beneficial.  
-
+doing so having multiple 'opinions' on the matter would be beneficial.
 
 ### Creating Density Maps to Visualize Occurences
+
 Portion done by: Brandon Dora
 
-This portion of the project will be centered around taking the dataset and creating multiple geographical
-representations of the data, that will not only provide a better look at the data itself, 
-but will also allow the viewer to infer where these fires are more likely to occur. 
+This portion of the project will be centered around taking the dataset and 
+creating multiple geographical representations of the data, that will not only 
+provide a better look at the data itself, but will also allow the viewer to infer 
+where these fires are more likely to occur.
 
-Referring back to what was accomplished in module 4, using ggmap, along with a few 
-other packages, we are able to visualize our data by geographically mapping where these 
-fires occured, and to go even further, we will be creating density maps to show hotspots
-by the county the fires had taken place in.
+Referring back to what was accomplished in module 4, using ggmap, along with a 
+few other packages, we are able to visualize our data by geographically mapping 
+where these fires occured, and to go even further, we will be creating density 
+maps to show hotspots by the county the fires had taken place in.
 
+### Building Shiny Web App for Interactive Visualization
 
+Portion done by: Alejandro Cepeda
 
+Alejandro will be focusing on an interactive plot using ggplot to allow the user 
+to choose between the actual and the predicted results using Brandon Ly's model 
+results. Alejandro's goal is to offer a visual representation of the predictions 
+in order to determine the season with the highest correlation as well as to allow 
+the end user to see the different levels of severity that each season can cause 
+in terms of forest fire damage.
+
+With the use of interactive visualization and the Shiny web app, which are topics 
+covered in module 11, are the basis of this portion of the project. The ability to 
+seamlessly view the variables of choice will allow our group to immediately 
+display the insights and model results to the viewer during our presentation, as 
+well as allow them to interact with the web app and analyze how each season affects 
+the chances of a forest fire becoming major.
 
 ---
 
 # Dataset
 
-The data set our group will be working with can be found [here](https://www.kaggle.com/datasets/ananthu017/california-wildfire-incidents-20132020?select=California_Fire_Incidents.csv)  
+The data set our group will be working with can be found [here](https://www.kaggle.com/datasets/ananthu017/california-wildfire-incidents-20132020?select=California_Fire_Incidents.csv)
 
+### Dataset Preview:
 ```{r message=FALSE, collapse=TRUE, paged.print=TRUE}
 dataset <- read.csv("California_Fire_Incidents.csv")
 head(dataset)
 ```
-

@@ -61,6 +61,25 @@ display the insights and model results to the viewer during our presentation, as
 well as allow them to interact with the web app and analyze how each season affects 
 the chances of a forest fire becoming major.
 
+### Cleaning the Dataset
+
+Portion done by: Benjamin Garcia
+
+This portion will include downloading the fire dataset from kaggle and importing it into R.
+Many of the columns in this dataset are not helpful or do not provide information which
+we need. Additionally, the dataset is alphabetically ordered which may not be the
+best format to have the columns in. The goal is to not only have a clean data frame,
+but to be able to understand what the variable mean and if they are related.
+
+Many of the data cleaning methods we have learned in this class and other
+places are used such as removing columns, filling in na values and 
+reordering columns so that it is easier to understand the entire
+data set. It is in the plan to create a new column based on data from
+other columns so that different operations and visualizations can be made.
+The data cleaning will help make the visualizations more clear and highlight
+what variables provide good information and which variables were either not as helpful
+or provided no insight.
+
 ---
 
 # Dataset

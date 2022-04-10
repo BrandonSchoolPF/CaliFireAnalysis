@@ -99,13 +99,15 @@ Acres burned- acres of land burned
 
 Active- t/f if active or inactive, 
 
-Admin unit- an indicator of location by who is responding, reporting or responsible for the fire and/or its data collection Most times if calfire is TRUE in CalFireIncident than it has calfire in admin unit
+Admin unit- an indicator of location by who is responding, reporting or responsible for the fire and/or its data collection
+Most times if calfire is TRUE in CalFireIncident than it has calfire in admin unit
 
 Airtanker- is a fixed-wing aircraft that can carry fire retardant or water and drop it on or in front of a fire to help slow the fire down. Number of airtankers?
 
 Archive year- the year the fire occurred
 
-calFireIncident- calfire is a specific organization in California that responds to fire incidents. Most likely bigger ones not small house fires that local firefighters respond to. According to Admin Unit there are multiple units within California
+calFireIncident- calfire is a specific organization in California that responds to fire incidents. 
+Most likely bigger ones not small house fires that local firefighters respond to.
 
 Canonical url - end of url specific for each fire
 

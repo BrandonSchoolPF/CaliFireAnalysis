@@ -422,6 +422,25 @@ allow our group to immediately display the insights and model results to
 the viewer during our presentation, as well as allow them to interact
 with the web app and analyze how each season affects the chances of a
 forest fire becoming major.</p>
+</div>
+<div id="cleaning-the-dataset" class="section level3">
+<h3>Cleaning the Dataset</h3>
+<p>Portion done by: Benjamin Garcia</p>
+<p>This portion will include downloading the fire dataset from kaggle
+and importing it into R. Many of the columns in this dataset are not
+helpful or do not provide information which we need. Additionally, the
+dataset is alphabetically ordered which may not be the best format to
+have the columns in. The goal is to not only have a clean data frame,
+but to be able to understand what the variable mean and if they are
+related.</p>
+<p>Many of the data cleaning methods we have learned in this class and
+other places are used such as removing columns, filling in na values and
+reordering columns so that it is easier to understand the entire data
+set. It is in the plan to create a new column based on data from other
+columns so that different operations and visualizations can be made. The
+data cleaning will help make the visualizations more clear and highlight
+what variables provide good information and which variables were either
+not as helpful or provided no insight.</p>
 <hr />
 </div>
 </div>
@@ -523,6 +542,72 @@ head(dataset)
 ## 4 2013-08-30T08:00:00Z           NA
 ## 5 2013-05-11T06:30:00Z           11
 ## 6 2013-09-24T20:15:00Z           NA</code></pre>
+</div>
+<div id="dataset-description" class="section level3">
+<h3>Dataset Description</h3>
+<p>1636 observations, originally 40 variables, but after cleaning 28
+variables.</p>
+<p>Acres burned- acres of land burned</p>
+<p>Active- t/f if active or inactive,</p>
+<p>Admin unit- an indicator of location by who is responding, reporting
+or responsible for the fire and/or its data collection Most times if
+calfire is TRUE in CalFireIncident than it has calfire in admin unit</p>
+<p>Airtanker- is a fixed-wing aircraft that can carry fire retardant or
+water and drop it on or in front of a fire to help slow the fire down.
+Number of airtankers?</p>
+<p>Archive year- the year the fire occurred</p>
+<p>calFireIncident- calfire is a specific organization in California
+that responds to fire incidents. Most likely bigger ones not small house
+fires that local firefighters respond to.</p>
+<p>Canonical url - end of url specific for each fire</p>
+<p>Condition statement- Description of specific conditions of that
+incident.</p>
+<p>Control statement- similar to condition, control of fire
+situation.</p>
+<p>County - county in California</p>
+<p>County id- id of county</p>
+<p>Crewsinvolved- numeric data of crew</p>
+<p>Dozer- Machine probably used to clean up or move things burned by the
+fire.</p>
+<p>Engine- Fire engines, or pumpers, carry hose, tools, and pump water.
+The engine can also carry ladders, but they are set up by the fire
+fighters and can be carried around. Key components of a fire engine
+include: Water tank (usually 500-750 gallons) Pump (approximately 1500
+GPM) Complement of various types of hose (for both attack and
+supply).</p>
+<p>Extinguished- extinguished date yyyy-mm-ddThh:mm:ssZ (seconds not
+recorded)</p>
+<p>Fatalities- number of deaths</p>
+<p>Featured- ?</p>
+<p>Final- ?</p>
+<p>Fuel type- type of fuel</p>
+<p>Helicopter- number of helicopters</p>
+<p>Injuries- number of injuries</p>
+<p>Latitude</p>
+<p>Location- better idea of where it occurs</p>
+<p>Longitude</p>
+<p>Majorincident- t/f if major incident</p>
+<p>Name- name of fire</p>
+<p>Percent contained - numerical value indicated the percent to which
+the fire is contained</p>
+<p>Personnel- number of people</p>
+<p>Public- public fire</p>
+<p>Search description- description of search, words</p>
+<p>Search keywords- keywords from previous variable</p>
+<p>Started- start of the fire time yyyy-mm-ddThh:mm:ssZ</p>
+<p>Status- whether fire was finalized or not</p>
+<p>Structures damaged- number</p>
+<p>Structures destroyed- number</p>
+<p>Structures evacuated- null</p>
+<p>Structure threatened- number</p>
+<p>Uniqueid- specific sequence of numbers and letters distinguishing
+each entry</p>
+<p>Updated- date, update to the information about the fire
+yyyy-mm-ddThh:mm:ssZ</p>
+<p>Water tenders- number of water tenders, A water tender is a type of
+firefighting apparatus that specialises in the transport of water from a
+water source to a fire scene. Water tenders are capable of drafting
+water from a stream, lake or hydrant.</p>
 </div>
 </div>
 

@@ -1,3 +1,5 @@
+# Script written by: Benjamin Garcia
+
 library(readr)
 fire_dataset_Cleaning <- read_csv("fire_dataset - Cleaning.csv")
 View(fire_dataset_Cleaning)

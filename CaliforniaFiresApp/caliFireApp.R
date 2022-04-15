@@ -73,12 +73,7 @@ ui <- fluidPage(
                     "# of Structures Destroyed" = "StructuresDestroyed")),
       
       selectInput("var3", "Variable:",
-                  c("Acres Burned" = "AcresBurned",
-                    "Archive Year" = "ArchiveYear",
-                    "# of Fatalities" = "Fatalities",
-                    "# Injured" = "Injuries",
-                    "# of Structures Damaged" = "StructuresDamaged",
-                    "# of Structures Destroyed" = "StructuresDestroyed"))
+                  c("County" = "Counties"))
       ),
     
     mainPanel(
@@ -104,7 +99,7 @@ server <- function(input, output) {
       geom_point()
   )
   
-  # generate us map data of all counties
+  # generate us map data of california counties
   us <- map_data("county") %>%
     filter(region=="california")
   

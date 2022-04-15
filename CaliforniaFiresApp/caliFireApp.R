@@ -90,8 +90,7 @@ server <- function(input, output) {
     select(AcresBurned, ArchiveYear, Counties, Fatalities, Injuries, 
            StructuresDamaged, StructuresDestroyed, Latitude, Longitude) %>%
     replace(is.na(.), 0) %>%
-    mutate_at("Counties", tolower) %>%
-    mutate_at(c("ArchiveYear","Fatalities","Injuries","StructuresDamaged","StructuresDestroyed"), as.numeric)
+    mutate_at("Counties", tolower)
   
   # scatterplot showing the desired input y-axis 
   output$scatterplot <- renderPlot(
@@ -100,15 +99,14 @@ server <- function(input, output) {
   )
   
   # generate us map data of california counties
-  us <- map_data("county") %>%
-    filter(region=="california")
+  cali <- map_data("county", region = "california")
   
   # ***(testing phase)***
   # map showing the desired variable on the California state map
   output$mapplot <- renderPlot(
     ggplot(fire_df, aes(map_id = Counties)) +
-      geom_map(map = us, aes(fill = fire_df[,input$var3])) +
-      expand_limits(x = us$long, y = us$lat) +
+      geom_map(map = cali, aes(fill = fire_df[,input$var3])) +
+      expand_limits(x = cali$long, y = cali$lat) +
       coord_map() + guides(fill=guide_legend((title=input$var3)))
   )
   

@@ -57,6 +57,7 @@ ui <- fluidPage(
       selectInput("var1", "Variable:",
                   c("Acres Burned" = "AcresBurned",
                     "Archive Year" = "ArchiveYear",
+                    "County" = "Counties",
                     "# of Fatalities" = "Fatalities",
                     "# Injured" = "Injuries",
                     "# of Structures Damaged" = "StructuresDamaged",
@@ -65,12 +66,13 @@ ui <- fluidPage(
       selectInput("var2", "Variable:",
                   c("Acres Burned" = "AcresBurned",
                     "Archive Year" = "ArchiveYear",
+                    "County" = "Counties",
                     "# of Fatalities" = "Fatalities",
                     "# Injured" = "Injuries",
                     "# of Structures Damaged" = "StructuresDamaged",
                     "# of Structures Destroyed" = "StructuresDestroyed")),
       
-      selectInput("var2", "Variable:",
+      selectInput("var3", "Variable:",
                   c("Acres Burned" = "AcresBurned",
                     "Archive Year" = "ArchiveYear",
                     "# of Fatalities" = "Fatalities",
@@ -110,9 +112,9 @@ server <- function(input, output) {
   # map showing the desired variable on the California state map
   output$mapplot <- renderPlot(
     ggplot(fire_df, aes(map_id = Counties)) +
-      geom_map(map = us, aes(fill = fire_df[,input$var1])) +
+      geom_map(map = us, aes(fill = fire_df[,input$var3])) +
       expand_limits(x = us$long, y = us$lat) +
-      coord_map() + guides(fill=guide_legend((title=input$var1)))
+      coord_map() + guides(fill=guide_legend((title=input$var3)))
   )
   
 }

@@ -3,12 +3,13 @@
 library(shiny)
 library(shinythemes)
 library(tidyverse)
+library(lubridate)
 library(rsconnect)
 
 # Benjamin's data cleaning script as a function
 cleanFireData <- function() {
   setwd("C:/Users/alece/My Drive/University/USF/SPRING 22/LIS 4761 - Data & Text Mining/Final Project/introdatafinalproject")
-
+  #setwd("~/Google Drive/University/USF/SPRING 22/LIS 4761 - Data & Text Mining/Final Project/introdatafinalproject")
   testFrame <- read.csv("California_Fire_Incidents.csv")
   
   testFrame <- testFrame[,-2]
@@ -46,70 +47,88 @@ cleanFireData <- function() {
 
 # Define UI
 ui <- fluidPage(
-  # I plan on adding a theme to the app,
-  # but no theme is avaliable when running
-  #shinythemes::themeSelector(),
-  #theme = shinytheme("darkly"),
-  titlePanel("California Forest Fire Map"),
+  #theme = shinythemes::shinytheme("darkly"),
+  titlePanel("California Forest Fire Analysis"),
   
   sidebarLayout(
     sidebarPanel(
-      selectInput("var1", "Variable:",
+      selectInput("var1", "Y-axis:",
                   c("Acres Burned" = "AcresBurned",
-                    "Archive Year" = "ArchiveYear",
-                    "County" = "Counties",
+                    "Month" = "Month",
+                    "Year" = "Year",
                     "# of Fatalities" = "Fatalities",
                     "# Injured" = "Injuries",
                     "# of Structures Damaged" = "StructuresDamaged",
-                    "# of Structures Destroyed" = "StructuresDestroyed")),
-      
-      selectInput("var2", "Variable:",
+                    "# of Structures Destroyed" = "StructuresDestroyed"),
+                  selected = "Injuries"),
+     
+      selectInput("var2", "Dot Size:",
                   c("Acres Burned" = "AcresBurned",
-                    "Archive Year" = "ArchiveYear",
-                    "County" = "Counties",
                     "# of Fatalities" = "Fatalities",
                     "# Injured" = "Injuries",
                     "# of Structures Damaged" = "StructuresDamaged",
-                    "# of Structures Destroyed" = "StructuresDestroyed")),
-      
-      selectInput("var3", "Variable:",
-                  c("County" = "Counties"))
+                    "# of Structures Destroyed" = "StructuresDestroyed"),
+                  selected = "Fatalities"),
       ),
     
     mainPanel(
-      plotOutput("scatterplot"),
-      plotOutput("mapplot")
+      plotOutput("scatterplot")
+    )
+  ), 
+  
+  sidebarLayout(
+    sidebarPanel(      
+      selectInput("var3", "X-axis:",
+                  c("Month" = "Month",
+                    "Year" = "Year"),
+                  selected = "Year"),
+      
+      selectInput("var4", "Y-axis:",
+                  c("Acres Burned" = "AcresBurned",
+                    "# of Fatalities" = "Fatalities",
+                    "# Injured" = "Injuries",
+                    "# of Structures Damaged" = "StructuresDamaged",
+                    "# of Structures Destroyed" = "StructuresDestroyed"),
+                  selected = "StructuresDamaged")
+    ),
+    
+    mainPanel(
+      plotOutput("barplot")
     )
   )
 )
 
 # server logic containing data prep and plotting for the app
 server <- function(input, output) {
-  # run Ben's data cleaning script and only keep wanted columns
+  # run Ben's data cleaning script plus further cleaning for my needs
   fire_df <- cleanFireData() %>%
-    select(AcresBurned, ArchiveYear, Counties, Fatalities, Injuries, 
-           StructuresDamaged, StructuresDestroyed, Latitude, Longitude) %>%
-    replace(is.na(.), 0) %>%
-    mutate_at("Counties", tolower)
+    select(AcresBurned, Started, Extinguished, Counties, Fatalities, 
+           Injuries, StructuresDamaged, StructuresDestroyed) %>%
+    mutate(Started = as.Date(Started, "%Y-%m-%d"), 
+           Extinguished = as.Date(Extinguished, "%Y-%m-%d")) %>%
+    mutate(Month = month(Started, label=TRUE), Year = year(Started)) %>%
+    filter(Year != 1969) # remove outliers found in data set
+    
+  # convert 0 and NAs to the mean of AcresBurned  
+  fire_df$AcresBurned[fire_df$AcresBurned == 0] <- NA
+  fire_df$AcresBurned[is.na(fire_df$AcresBurned)] <- mean(fire_df$AcresBurned, 
+                                                          na.rm = TRUE)
   
-  # scatterplot showing the desired input y-axis 
+  # scatterplot showing the desired inputs
   output$scatterplot <- renderPlot(
-    ggplot(fire_df, aes(x=fire_df[,input$var1], y=fire_df[,input$var2])) +
-      geom_point()
+    ggplot(fire_df, aes(x=AcresBurned, y=fire_df[,input$var1])) +
+      geom_point(aes(size=fire_df[,input$var2])) + 
+      labs(title = "Scatter Plot", x="Acres Burned", 
+           y=paste(input$var1), size=paste(input$var2))
   )
   
-  # generate us map data of california counties
-  cali <- map_data("county", region = "california")
-  
-  # ***(testing phase)***
-  # map showing the desired variable on the California state map
-  output$mapplot <- renderPlot(
-    ggplot(fire_df, aes(map_id = Counties)) +
-      geom_map(map = cali, aes(fill = fire_df[,input$var3])) +
-      expand_limits(x = cali$long, y = cali$lat) +
-      coord_map() + guides(fill=guide_legend((title=input$var3)))
+  # bar plot of the desired inputs
+  output$barplot <- renderPlot(
+    ggplot(fire_df, aes(x=as.factor(fire_df[,input$var3]), 
+                        y=fire_df[,input$var4])) +
+      geom_bar(position="dodge", stat="identity") +
+      labs(title="Line Plot", x=paste(input$var3), y=paste(input$var4))
   )
-  
 }
 
 # Run the application 

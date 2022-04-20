@@ -1,0 +1,81 @@
+### Brandon Dora's Density plot of the Fires per County in California. 
+
+library(readr)
+library(ggmap)
+library(ggplot2)
+library(tibble)
+library(tidyverse)
+library(zipcode)
+library(remotes)
+setwd("C:/Users/Brandon Dora/Desktop/DataMining")
+ testFrame <- read.csv("California_Fire_Incidents.csv")
+  
+  testFrame <- testFrame[,-2]
+  
+  testFrame <- testFrame[,-6]
+  
+  testFrame <- testFrame[,-9]
+  
+  testFrame <- testFrame[,-14:-16]
+  
+  testFrame <- testFrame[,-21]
+ 
+  testFrame <- testFrame[,-22]
+
+  testFrame <- testFrame[,-25]
+  
+  summary(testFrame$StructuresEvacuated)
+
+  testFrame <- testFrame[,-27]
+  
+  summary(testFrame$StructuresThreatened)
+  
+  testFrame <- testFrame[,-28:-29]
+  
+  testFrame <- testFrame %>% relocate(Started, .before = Extinguished)
+  
+  testFrame <- testFrame %>% relocate(Name, .before = AcresBurned)
+  
+  testFrame <- testFrame %>% relocate(Longitude, .before = Location)
+  
+  testFrame <- replace_na(testFrame, list(AirTankers = 0, CrewsInvolved = 0, Dozers = 0, Engines = 0, Fatalities = 0, Helicopters = 0, Injuries = 0, PersonnelInvolved = 0, StructuresDamaged = 0, StructuresDestroyed = 0, StructuresThreatened = 0, WaterTenders = 0))
+
+  
+states <- map_data("state")
+California <- subset(states, region == "california")
+California$Longitude <- California$long
+California$Latitude <- California$lat
+California$long = NULL
+California$lat = NULL
+California$region <- str_to_title(California$region)
+counties <- map_data("county")
+californiaCounties <- subset(counties, region == "california")
+californiaCounties$Counties <- str_to_title(californiaCounties$subregion)
+californiaCounties$subregion = NULL
+californiaCounties$Longitude <- californiaCounties$long
+californiaCounties$Latitude <- californiaCounties$lat
+californiaCounties$long = NULL
+californiaCounties$lat = NULL
+testFrame2 <- table(testFrame$Counties)
+testFrame2
+
+testFrame2 <- as.matrix(testFrame2)
+testFrame2 <- as.data.frame(testFrame2)
+testFrame2$Counties <- c("Alameda", "Alpine", "Amador", "Butte", "Calaveras", "Colusa", "Contra Costa", "Del Norte", "El Dorado", "Fresno", "Glenn", "Humboldt", "Inyo", "Kern", "Kings", "Lake", "Lassen", "Los Angeles", "Madera", "Marin", "Mariposa", "Mendocino", "Merced", "Mexico", "Modoc", "Mono", "Monterey", "Napa", "Nevada", "Orange", "Placer", "Plumas", "Riverside", "Sacramento", "San Benito", "San Bernardino", "San Diego", "San Joaquin", "San Luis Obispo", "San Mateo", "Santa Barbara", "Santa Clara", "Santa Cruz", "Shasta", "Sierra", "Siskiyou", "Solano", "Sonoma", "Stanislaus", "State of Nevada", "State of Oregon", "Sutter", "Tehama", "Trinity", "Tulare", "Tuolumne", "Ventura", "Yolo", "Yuba")
+testFrame2$FireCount <- testFrame2$V1
+testFrame2$V1 = NULL
+t
+
+californiaCounties <- left_join(californiaCounties, testFrame2, by="Counties")
+californiaCounties[is.na(californiaCounties)] = 0
+
+
+
+
+caliFire <- ggplot(data = California, mapping = aes(x = Longitude, y = Latitude, group = group))
+caliFire <- caliFire + geom_polygon(data = californiaCounties, color = "white") + geom_polygon(color = "black", fill = NA)
+caliFire <- caliFire + coord_fixed(1.3)
+caliFire <- caliFire + geom_polygon(data = californiaCounties, aes(fill = FireCount))
+caliFire<- caliFire + ggtitle("Fire Count in California by County")
+caliFire2d <- caliFire + stat_density2d(bins = 20)
+caliFire2d 

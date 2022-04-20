@@ -1,0 +1,34 @@
+---
+title: "Project Spreadsheet? idk give me a better title lol"
+author: "Benjamin Garcia, Brandon Ly, Brandon Dora, Alejandro Cepeda"
+date: '2022-04-24'
+output: html_document
+---
+
+```{r setup}
+
+```
+
+#### Ben's Part:
+
+```{r}
+
+```
+
+#### Brandon Ly's Part:
+
+```{r}
+
+```
+
+#### Brandon Dora's Part:
+
+```{r}
+
+```
+
+#### Alejandro's Part:
+
+```{r}
+
+```

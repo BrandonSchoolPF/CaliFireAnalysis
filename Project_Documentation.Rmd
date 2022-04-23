@@ -15,12 +15,148 @@ output: html_document
 
 ```
 
-#### Brandon Ly's Part:
+***
+#### Training a Model for Correlation:
+```{r include=FALSE}
+#Using my data:
+library(dplyr)
+library(e1071)
+library(kernlab)
+library(ggplot2)
+library(Metrics)
+#Cleaning the data to only include the columns I need
+data <- read.csv("California_Fire_incidents.csv")
+data <- data %>%
+        select(AcresBurned, ArchiveYear, CalFireIncident, Started, MajorIncident)
+data$CalFireIncident <- as.factor(data$CalFireIncident)
 
-```{r}
+
+#Removing the the year and day from the date so that I can only use month
+data$month <- strftime(data$Started,"%m")
+data$day <- strftime(data$Started, "%j")
+data$month <- as.numeric(data$month)
+data$day <- as.numeric(data$day)
+
+#season column
+data$seasons <- as.numeric(data$month)
+
+#Creating a separate df for seasons
+spring <- c(03, 04, 05)
+fall <- c(09, 10 , 11)
+summer <- c(06, 07, 08)
+winter <- c(12, 01, 02)
+
+seasons <- data.frame(
+  seasons = c("spring","spring","spring", "fall","fall","fall", "summer","summer","summer", "winter","winter","winter"),
+  month = c(spring, fall, summer, winter)
+)
+
+data <- data %>%
+        full_join(seasons, data, by = "month")
 
 ```
 
+Upon looking at the original data frame, wanting to see if there were a 
+correlation between the seasons and the amount of acres burned. In theory 
+dry conditions in the summer would cause more fires due to the intense heat that
+California gets during the summer.  
+
+Using Ben's initial cleaning of the original data set, more cleaning was needed
+in order for Brandon to obtain the seasons for the months:  
+
+```{r}
+#Creating final dataset
+data_fin <- data %>%
+            select(AcresBurned, ArchiveYear, CalFireIncident, "season" = seasons.y, month, day, Started, MajorIncident) %>%
+            filter(CalFireIncident == "True")
+data_fin$Started <- as.Date(data_fin$Started)
+data_fin$Day <- strftime(data_fin$Started,"%m-%d")
+data_fin$MajorIncident <- as.factor(data_fin$MajorIncident)
+data_fin$AcresBurned <- as.numeric(data_fin$AcresBurned)
+data_fin$season <- as.factor(data_fin$season)
+data_fin$month <- as.factor(data_fin$month)
+data_fin$AcresBurned[data_fin$AcresBurned == 0] <- NA
+data_fin$AcresBurned[is.na(data_fin$AcresBurned)] <- mean(data$AcresBurned, na.rm = TRUE)
+head(data_fin)
+```
+By adding the seasons, Brandon's correlational analysis would be easier, due to
+his predictive model only predicting the four seasons, rather than the 12 
+months. In theory, Brandon's predictive model using a support vector machine, 
+if his predictive model could accurately predict the seasons using the 
+Acres Burned, whether the fire was considered major, and if it was reported by 
+the California wildfire team, an accurate predictive model would mean that the 
+size of the fire has a correlation between the time of year, and in our case 
+which season of the year.  
+
+
+Using ggplot, we could find if there are any correlations to be made:
+```{r echo=FALSE}
+ggplot(data_fin, aes(x = Day, 
+                     y = AcresBurned, 
+                     color = season)) +
+                geom_point() +
+                geom_jitter() +
+                theme(axis.text.x=element_blank()) + 
+                ylim(0, 5000) +
+                labs(x = "Entire Year in Days")
+```
+
+Considering that the days are chronological in order due to the year, the plot 
+will be shown accordingly. With the division of the plot with the different 
+colors showing the different seasons, there is not potential for a linear model
+to show a prediction, however a predictive model using classification
+would have a better fit considering that the column we are predicting is a 
+factor with 4 levels: Fall, Winter, Spring, and Summer.  
+
+Using a random sample that we learned in module 10, we can create a test and
+training set which we will use for our analysis and model: 
+```{r echo=FALSE}
+#Train and Test set
+set.seed(123)
+indices <- sample(nrow(data_fin), .70 * nrow(data_fin))
+train <- data_fin[indices, ]
+train <- train %>%
+         select(AcresBurned, season, MajorIncident)
+
+test <- data_fin[-indices,]
+test <- test %>%
+        select(AcresBurned, season, MajorIncident)
+head(test)
+head(train)
+```
+
+Going back to Brandon's analysis, the use of a support vector machine would be 
+used to see if there is a significance of the stated vectors in order for the 
+algorithm to accurately predict the season, if the model could predict the 
+seasons with high accuracy then there would be a significance in season to the 
+size of the fire.  
+
+Using the smv() function from the e1071 library, we could use the smv algorithm 
+to predict the seasons using classification.  
+
+```{r}
+#I want to see if my model could predict the season using the variables
+svm_model <- svm(season ~., data = train)
+svm_model
+
+```
+```{r echo=FALSE}
+#Predicting dataset to compare with test dataset
+svm_pred_season <- predict(svm_model, test, cost = 100, gamma = .01)
+svm_pred <- test
+svm_pred$predseason <- svm_pred_season
+
+#Checking accuracy
+percentage <- sum(test$season == svm_pred$predseason) / nrow(svm_pred) * 100
+sprintf("Model's Accuracy: %0.1f%%", percentage)
+```
+
+Considering that the model's accuracy is ~64%, and the predicted output only
+gives out summer, the low accuracy shows that the only correlation the model can
+will outfit the summer factor, meaning that there is no correlation between the
+seasons and size of fire.  
+
+***
 #### Brandon Dora's Part:
 
 ```{r}

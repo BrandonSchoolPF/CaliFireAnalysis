@@ -256,7 +256,7 @@ theme_set(theme_minimal())
 thematic_shiny()
 ```
 To view the app, click this [link](https://acepeda.shinyapps.io/WildfiresApp/).
-```{r}
+```{r include=FALSE}
 # deploy the app
 #deployApp()
 # Run the app

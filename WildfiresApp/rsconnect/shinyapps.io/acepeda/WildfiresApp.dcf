@@ -4,8 +4,11 @@ username:
 account: acepeda
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
-appId: 6123006
-bundleId: 5814386
+appId: 6144566
+bundleId: 5827142
 url: https://acepeda.shinyapps.io/WildfiresApp/
-when: 1650386751.30569
-lastSyncTime: 1650386751.30569
+when: 1650647717.65426
+lastSyncTime: 1650647717.66211
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: app.html

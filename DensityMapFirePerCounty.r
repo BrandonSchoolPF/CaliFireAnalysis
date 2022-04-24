@@ -16,37 +16,37 @@ setwd("C:/Users/Brandon Dora/Desktop/DataMining")
 
 
 #implementing Ben's cleaned dataset
- testFrame <- read.csv("California_Fire_Incidents.csv")
+ testFrame3 <- read.csv("California_Fire_Incidents.csv")
   
-  testFrame <- testFrame[,-2]
+  testFrame3 <- testFrame[,-2]
   
-  testFrame <- testFrame[,-6]
+  testFrame3 <- testFrame[,-6]
   
-  testFrame <- testFrame[,-9]
+  testFrame3 <- testFrame[,-9]
   
-  testFrame <- testFrame[,-14:-16]
+  testFrame3 <- testFrame[,-14:-16]
   
-  testFrame <- testFrame[,-21]
+  testFrame3 <- testFrame[,-21]
  
-  testFrame <- testFrame[,-22]
+  testFrame3 <- testFrame[,-22]
 
-  testFrame <- testFrame[,-25]
+  testFrame3 <- testFrame[,-25]
   
-  summary(testFrame$StructuresEvacuated)
+  summary(testFrame3$StructuresEvacuated)
 
-  testFrame <- testFrame[,-27]
+  testFrame3 <- testFrame3[,-27]
   
-  summary(testFrame$StructuresThreatened)
+  summary(testFrame3$StructuresThreatened)
   
-  testFrame <- testFrame[,-28:-29]
+  testFrame3 <- testFrame3[,-28:-29]
   
-  testFrame <- testFrame %>% relocate(Started, .before = Extinguished)
+  testFrame3 <- testFrame3 %>% relocate(Started, .before = Extinguished)
   
-  testFrame <- testFrame %>% relocate(Name, .before = AcresBurned)
+  testFrame3 <- testFrame3 %>% relocate(Name, .before = AcresBurned)
   
-  testFrame <- testFrame %>% relocate(Longitude, .before = Location)
+  testFrame3 <- testFrame3 %>% relocate(Longitude, .before = Location)
   
-  testFrame <- replace_na(testFrame, list(AirTankers = 0, CrewsInvolved = 0, Dozers = 0, Engines = 0, Fatalities = 0, Helicopters = 0, Injuries = 0, PersonnelInvolved = 0, StructuresDamaged = 0, StructuresDestroyed = 0, StructuresThreatened = 0, WaterTenders = 0))
+  testFrame3 <- replace_na(testFrame3, list(AirTankers = 0, CrewsInvolved = 0, Dozers = 0, Engines = 0, Fatalities = 0, Helicopters = 0, Injuries = 0, PersonnelInvolved = 0, StructuresDamaged = 0, StructuresDestroyed = 0, StructuresThreatened = 0, WaterTenders = 0))
 
 
 ## creating and cleaning data frames to map out the state of california
@@ -70,7 +70,7 @@ californiaCounties$lat = NULL
 ### creating a new dataframe based on our original to focus on the counties, and the number of times a fire has occured in each of them. 
 
 
-testFrame2 <- table(testFrame$Counties)
+testFrame2 <- table(testFrame3$Counties)
 testFrame2
 
 testFrame2 <- as.matrix(testFrame2)

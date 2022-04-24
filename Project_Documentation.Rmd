@@ -3,13 +3,31 @@ title: "California Wildfire Analysis"
 author: "Benjamin Garcia, Alejandro Cepeda, Brandon Ly, Brandon Dora"
 date: "`r Sys.Date()`"
 output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
-***
+------------------------------------------------------------------------
+
 #### Data Cleaning:
-All rows in active column are False because none of them are active anymore. This information is not particularly useful so Benjamin removed this column.
-The canonical url column provides the ends of a url, but no mention of the website being references. There is not any real value so Benjamin removed the
-canonical url column. County id is not particularly helpful since longitude and latitude values are already present. Benjamin removed the County id column. The column featured is mostly false and the column final is mostly true. Fuel type is mostly null. Benjamin removed featured, final and fuel type columns together. The percent contained column is all 100’s since all fires reported have been contained. Benjamin removed the percent contained column. The public data column has all TRUE values, so Benjamin removed it. The status column all finalized value so Benjamin removed it. All of the values in StructuresEvacuated were NA so Benjamin removed it. The UniqueId column makes no sense so Benjamin removed it. The update column provides no useful dates like started and extinguished so Benjamin removed it. 
+
+All rows in active column are False because none of them are active
+anymore. This information is not particularly useful so Benjamin removed
+this column. The canonical url column provides the ends of a url, but no
+mention of the website being references. There is not any real value so
+Benjamin removed the canonical url column. County id is not particularly
+helpful since longitude and latitude values are already present.
+Benjamin removed the County id column. The column featured is mostly
+false and the column final is mostly true. Fuel type is mostly null.
+Benjamin removed featured, final and fuel type columns together. The
+percent contained column is all 100's since all fires reported have been
+contained. Benjamin removed the percent contained column. The public
+data column has all TRUE values, so Benjamin removed it. The status
+column all finalized value so Benjamin removed it. All of the values in
+StructuresEvacuated were NA so Benjamin removed it. The UniqueId column
+makes no sense so Benjamin removed it. The update column provides no
+useful dates like started and extinguished so Benjamin removed it.
 
 ```{r}
 library(readr)
@@ -27,7 +45,10 @@ fire_dataset_Cleaning <- fire_dataset_Cleaning[,-27]
 fire_dataset_Cleaning <- fire_dataset_Cleaning[,-28:-29]
 ```
 
-Benjamin moved the started column to be in front of the established column for clarity. Benjamin moved the name column to be the first column of the dataset for clarity. Benjamin moved the Longitude after the Latitude for clarity.  
+Benjamin moved the started column to be in front of the established
+column for clarity. Benjamin moved the name column to be the first
+column of the dataset for clarity. Benjamin moved the Longitude after
+the Latitude for clarity.
 
 ```{r}
 library(dplyr)
@@ -36,7 +57,12 @@ fire_dataset_Cleaning <- fire_dataset_Cleaning %>% relocate(Name, .before = Acre
 fire_dataset_Cleaning <- fire_dataset_Cleaning %>% relocate(Longitude, .before = Location)
 ```
 
-In many of the columns, there were both NA values and numeric values. Benjamin decided to replace NA values with 0 since it is unclear what the true value of these observations might be. Please consider airtankers, crewsinvolved, dozers, engines, fatalities, helicopters, injuries, personnel involved, structures damaged, structures destroyed, structures threatened and water tenders with care.  
+In many of the columns, there were both NA values and numeric values.
+Benjamin decided to replace NA values with 0 since it is unclear what
+the true value of these observations might be. Please consider
+airtankers, crewsinvolved, dozers, engines, fatalities, helicopters,
+injuries, personnel involved, structures damaged, structures destroyed,
+structures threatened and water tenders with care.
 
 ```{r}
 library(tidyr)
@@ -46,8 +72,10 @@ min(fire_dataset_Cleaning$Extinguished)
 summary(fire_dataset_Cleaning$Extinguished)
 ```
 
-***
+------------------------------------------------------------------------
+
 #### California Wildfire Shiny Web App:
+
 ```{r echo=FALSE, message=FALSE}
 cleanFireData <- function() {
   # Benjamin's cleaning script as a function for server use
@@ -72,7 +100,12 @@ cleanFireData <- function() {
 }
 ```
 
-The following section is intended to interactively visualize the various variables available. The variables that Alejandro wants to focus on are the `AcresBurned` throughout the four seasons of the year. With the help of module 11's material, the process of developing and deploying the shiny web app was possible with the use of the `shiny` and `rsconnect` packages.
+The following section is intended to interactively visualize the various
+variables available. The variables that Alejandro wants to focus on are
+the `AcresBurned` throughout the four seasons of the year. With the help
+of module 11's material, the process of developing and deploying the
+shiny web app was possible with the use of the `shiny` and `rsconnect`
+packages.
 
 ```{r message=FALSE}
 # libraries
@@ -85,11 +118,17 @@ library(lubridate)
 library(rsconnect)
 ```
 
-Below, Alejandro has defined a UI with two separate tabs within the panel:
+Below, Alejandro has defined a UI with two separate tabs within the
+panel:
 
--   The **scatter plot** will display the result of choosing between three variables, the number of **acres burned**, **fatalities**, and **injuries**. These variables will be options for the x-axis, y-axis, and dot size of the plot.
+-   The **scatter plot** will display the result of choosing between
+    three variables, the number of **acres burned**, **fatalities**, and
+    **injuries**. These variables will be options for the x-axis,
+    y-axis, and dot size of the plot.
 
--   The **bar graph** will instead visualize any trends in the number of acres burned, along with other observations, per each year. These will be separated by the season in which they occurred.
+-   The **bar graph** will instead visualize any trends in the number of
+    acres burned, along with other observations, per each year. These
+    will be separated by the season in which they occurred.
 
 ```{r}
 # Define UI
@@ -146,7 +185,10 @@ ui <- fluidPage(
 )
 ```
 
-Inside the `server` function, Alejandro also included some extra wrangling to the data to fit his needs. After this, he proceed to create the scatter plot and bar graph visualizations displaying the inputs available for selection.
+Inside the `server` function, Alejandro also included some extra
+wrangling to the data to fit his needs. After this, he proceed to create
+the scatter plot and bar graph visualizations displaying the inputs
+available for selection.
 
 ```{r}
 # server logic containing data prep and plotting for the app
@@ -219,10 +261,16 @@ thematic_shiny()
 # Run the app
 shinyApp(ui = ui, server = server)
 ```
-The shiny app shows that there may not be a correlation with the season how intense a California wildfire can get. Although there is a noticeable trend during the summer season throughout the years 2013-2019, the wildfires during the fall season in 2017 says otherwise.
 
-***
+The shiny app shows that there may not be a correlation with the season
+how intense a California wildfire can get. Although there is a
+noticeable trend during the summer season throughout the years
+2013-2019, the wildfires during the fall season in 2017 says otherwise.
+
+------------------------------------------------------------------------
+
 #### Training a Model for Correlation:
+
 ```{r message=FALSE}
 #Using my data:
 library(dplyr)
@@ -262,13 +310,13 @@ data <- data %>%
 
 ```
 
-Upon looking at the original data frame, wanting to see if there were a 
-correlation between the seasons and the amount of acres burned. In theory 
-dry conditions in the summer would cause more fires due to the intense heat that
-California gets during the summer.  
+Upon looking at the original data frame, wanting to see if there were a
+correlation between the seasons and the amount of acres burned. In
+theory dry conditions in the summer would cause more fires due to the
+intense heat that California gets during the summer.
 
-Using Ben's initial cleaning of the original data set, more cleaning was needed
-in order for Brandon to obtain the seasons for the months:  
+Using Ben's initial cleaning of the original data set, more cleaning was
+needed in order for Brandon to obtain the seasons for the months:
 
 ```{r}
 #Creating final dataset
@@ -285,17 +333,19 @@ data_fin$AcresBurned[data_fin$AcresBurned == 0] <- NA
 data_fin$AcresBurned[is.na(data_fin$AcresBurned)] <- mean(data$AcresBurned, na.rm = TRUE)
 head(data_fin)
 ```
-By adding the seasons, Brandon's correlational analysis would be easier, due to
-his predictive model only predicting the four seasons, rather than the 12 
-months. In theory, Brandon's predictive model using a support vector machine, 
-if his predictive model could accurately predict the seasons using the 
-Acres Burned, whether the fire was considered major, and if it was reported by 
-the California wildfire team, an accurate predictive model would mean that the 
-size of the fire has a correlation between the time of year, and in our case 
-which season of the year.  
 
+By adding the seasons, Brandon's correlational analysis would be easier,
+due to his predictive model only predicting the four seasons, rather
+than the 12 months. In theory, Brandon's predictive model using a
+support vector machine, if his predictive model could accurately predict
+the seasons using the Acres Burned, whether the fire was considered
+major, and if it was reported by the California wildfire team, an
+accurate predictive model would mean that the size of the fire has a
+correlation between the time of year, and in our case which season of
+the year.
 
 Using ggplot, we could find if there are any correlations to be made:
+
 ```{r}
 ggplot(data_fin, aes(x = Day, 
                      y = AcresBurned, 
@@ -307,15 +357,17 @@ ggplot(data_fin, aes(x = Day,
                 labs(x = "Entire Year in Days")
 ```
 
-Considering that the days are chronological in order due to the year, the plot 
-will be shown accordingly. With the division of the plot with the different 
-colors showing the different seasons, there is not potential for a linear model
-to show a prediction, however a predictive model using classification
-would have a better fit considering that the column we are predicting is a 
-factor with 4 levels: Fall, Winter, Spring, and Summer.  
+Considering that the days are chronological in order due to the year,
+the plot will be shown accordingly. With the division of the plot with
+the different colors showing the different seasons, there is not
+potential for a linear model to show a prediction, however a predictive
+model using classification would have a better fit considering that the
+column we are predicting is a factor with 4 levels: Fall, Winter,
+Spring, and Summer.
 
-Using a random sample that we learned in module 10, we can create a test and
-training set which we will use for our analysis and model: 
+Using a random sample that we learned in module 10, we can create a test
+and training set which we will use for our analysis and model:
+
 ```{r echo=FALSE}
 #Train and Test set
 set.seed(123)
@@ -331,14 +383,14 @@ head(test)
 head(train)
 ```
 
-Going back to Brandon's analysis, the use of a support vector machine would be 
-used to see if there is a significance of the stated vectors in order for the 
-algorithm to accurately predict the season, if the model could predict the 
-seasons with high accuracy then there would be a significance in season to the 
-size of the fire.  
+Going back to Brandon's analysis, the use of a support vector machine
+would be used to see if there is a significance of the stated vectors in
+order for the algorithm to accurately predict the season, if the model
+could predict the seasons with high accuracy then there would be a
+significance in season to the size of the fire.
 
-Using the svm() function from the e1071 library, we could use the smv algorithm 
-to predict the seasons using classification.  
+Using the svm() function from the e1071 library, we could use the smv
+algorithm to predict the seasons using classification.
 
 ```{r}
 #I want to see if my model could predict the season using the variables
@@ -358,12 +410,13 @@ percentage <- sum(test$season == svm_pred$predseason) / nrow(svm_pred) * 100
 sprintf("Model's Accuracy: %0.1f%%", percentage)
 ```
 
-Considering that the model's accuracy is ~64%, and the predicted output only
-gives out summer, the low accuracy shows that the only correlation the model can
-will outfit the summer factor, meaning that there is no correlation between the
-seasons and size of fire.  
+Considering that the model's accuracy is \~64%, and the predicted output
+only gives out summer, the low accuracy shows that the only correlation
+the model can will outfit the summer factor, meaning that there is no
+correlation between the seasons and size of fire.
 
-***
+------------------------------------------------------------------------
+
 #### Brandon Dora's Part:
 
 ```{r}

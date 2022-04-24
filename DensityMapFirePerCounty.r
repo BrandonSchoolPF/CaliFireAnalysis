@@ -90,20 +90,20 @@ californiaCounties[is.na(californiaCounties)] = 0
 # creating our state map
 caliFire <- ggplot(data = California, mapping = aes(x = Longitude, y = Latitude, group = group))
 caliFire <- caliFire + geom_polygon(data = californiaCounties, color = "white") + geom_polygon(color = "black", fill = NA)
-
+caliFire <- caliFire + coord_fixed(1.3)
 
 ### the state map sectioned by counties
-caliFire 
 
 
 
+caliFire
 
 
 ### adding our data and creating our 2d density map on top of a heatmap
 
 
-caliFire <- caliFire + coord_fixed(1.3)
+
 caliFire <- caliFire + geom_polygon(data = californiaCounties, aes(fill = FireCount))
 caliFire<- caliFire + ggtitle("Fire Count in California by County")
-caliFire2d <- caliFire + stat_density2d(bins = 20)
+caliFire2d <- caliFire + stat_density2d()
 caliFire2d 

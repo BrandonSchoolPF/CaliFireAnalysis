@@ -6,6 +6,7 @@ output: html_document
 editor_options: 
   markdown: 
     wrap: 72
+runtime: shiny
 ---
 
 ------------------------------------------------------------------------
@@ -76,7 +77,7 @@ summary(fire_dataset_Cleaning$Extinguished)
 
 #### California Wildfire Shiny Web App:
 
-```{r echo=FALSE, message=FALSE}
+```{r message=FALSE, include=FALSE}
 cleanFireData <- function() {
   # Benjamin's cleaning script as a function for server use
   testFrame <- read.csv("California_Fire_Incidents.csv")
@@ -107,7 +108,7 @@ of module 11's material, the process of developing and deploying the
 shiny web app was possible with the use of the `shiny` and `rsconnect`
 packages.
 
-```{r message=FALSE}
+```{r message=FALSE, include=FALSE}
 # libraries
 #install.packages(c('shiny','shinythemes','thematic','tidyverse','lubridate','rsconnect'))
 library(shiny)
@@ -418,9 +419,9 @@ correlation between the seasons and size of fire.
 
 ------------------------------------------------------------------------
 
-#### Brandon Dora's Part:
+### Density Plot and State Map showing fire occurences in the State of California.
 
-```{r}
+```{r include=FALSE}
 ### Brandon Dora's Density plot of the Fires per County in California. 
 
 
@@ -435,12 +436,12 @@ library(remotes)
 
 
 ```
-### Density Plot and State Map showing fire occurences in the State of California.
+
 
 For the portion below, Brandon Dora had decided to create a density map similar 
 to the ones that we had created prior in week 4 of Introduction to Data Mining.
 
-```{r}
+```{r include=FALSE}
 
 #implementing Ben's cleaned dataset using alejandro's inner portion of his function
  testFrame3 <- read.csv("California_Fire_Incidents.csv")
@@ -474,8 +475,8 @@ to the ones that we had created prior in week 4 of Introduction to Data Mining.
   testFrame3 <- testFrame3 %>% relocate(Longitude, .before = Location)
   
   testFrame3 <- replace_na(testFrame3, list(AirTankers = 0, CrewsInvolved = 0, Dozers = 0, Engines = 0, Fatalities = 0, Helicopters = 0, Injuries = 0, PersonnelInvolved = 0, StructuresDamaged = 0, StructuresDestroyed = 0, StructuresThreatened = 0, WaterTenders = 0))
-
-
+```
+```{r}
 ## creating and cleaning data frames to map out the state of california
   
 states <- map_data("state")
@@ -496,6 +497,7 @@ californiaCounties$lat = NULL
 
 ### creating a new dataframe based on our original to focus on the counties, and the number of times a fire has occured in each of them. 
 ```
+
 The reasoning behind creating a new dataframe for this, was to be able to seamlessly consolidate the name's of each county in California,
 while also being able to log the number of times a fire had occured in each county. This way, we are able to join our dataframe, with the newly created "californiaCounties" dataframe listed above. There are many other ways to do this, but for the method he had chosen it was simply because it made for
 a much more seamless process, and turned out to be more time effective. 
@@ -546,10 +548,70 @@ caliFire2d
 
 ```
 As you can see, our density map is properly displaying our Two-Dimensional density map, where we can 
-easily see by county where more often than not fires had occured. 
-```{r}
+easily see by county where more often than not fires had occurred. 
 
+------------------------------------------------------------------------
 
+### Conclusion
 
+The wildfire analysis gave many insights into looking at what was going on in 
+California from 2013-2019.  
+
+Alejandro was able to utilize the data in order to make an interactive dashboard
+for his collection, the dashboard can be found [here](https://acepeda.shinyapps.io/WildfiresApp/). 
+Using Alejandro's dashboard we were able to have an insight as to the cummulative 
+acres burned per each year as seen below: 
+
+```{r echo=FALSE}
+ggplot(data_fin, aes(x = ArchiveYear, y = AcresBurned, fill = season)) +
+        geom_bar(position="dodge", stat="identity", width=0.7)
 ```
+
+This bar graph that is also on Alejandro's dashboard showed insight to the size 
+of the fires per each year with emphasis on seasons. As we can see here it is 
+really difficult to determine any patterns or trends among the seasons per each 
+year, which gives an idea that maybe California's weather has no direct effect 
+on the time of year or season.
+
+By figuring this out, we can transition to Brandon Ly's analysis in finding if 
+there is a correlation between the season and acres burned.  
+
+```{r echo=FALSE}
+ggplot(data_fin, aes(x = Day, 
+                     y = AcresBurned, 
+                     color = season)) +
+                geom_point() +
+                geom_jitter() +
+                theme(axis.text.x=element_blank()) + 
+                ylim(0, 5000) +
+                labs(x = "Entire Year in Days")
+```
+
+Alike Alejandro's bar plot, Brandon's graph which plots the days of the year along the points showing
+the size of the fire has a insignificant outlook alike Alejandro's bar plot. The points are 
+evenly scattered which point the direction that climate and season had no effect on the size
+of a wildfire in California.  
+
+Through the use of support vector machines, Brandon found that his model could 
+only predict the outcomes of the seasons with a 64%, meaning that there is not 
+a correlation between the two. By using Brandon Ly's and Alejandro's visualization
+it makes sense that Brandon Ly's model could not accuretly predict the season 
+from the acres burned because there is no correlation between the two.  
+
+We can take a further look in the details of the fires using Brandon Dora's 
+visualization.  
+
+```{r echo=FALSE}
+caliFire2d
+```
+
+Using Brandon Dora's density map, it shows that the most fires that occurred in 
+California were scattered among the bay area, and down towards the west coast of 
+California. Again, with the knowledge from Brandon Ly's and Alejandro's findings
+it makes sense that the season has no effect on the size of fires, because most 
+of the fires occurred in the spots where the weather remains consistent.  
+
+This shows that wildfires in California occur simply due to the natural climate
+California faces each year, and that seasons or time of years do not have a direct
+play in how the fires start and occur. 
 

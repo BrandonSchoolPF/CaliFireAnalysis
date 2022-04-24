@@ -254,10 +254,11 @@ server <- function(input, output) {
 theme_set(theme_minimal())
 # have the shiny theme match the ggplot theme
 thematic_shiny()
-
+```
+To view the app, click this [link](https://acepeda.shinyapps.io/WildfiresApp/).
+```{r}
 # deploy the app
 #deployApp()
-
 # Run the app
 shinyApp(ui = ui, server = server)
 ```

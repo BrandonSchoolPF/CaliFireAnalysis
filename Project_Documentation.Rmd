@@ -5,16 +5,55 @@ date: '2022-04-24'
 output: html_document
 ---
 
-```{r setup}
+------
 
-```
-
-#### Ben's Part:
+#### DataSet Cleaning:
+All rows in active column are False because none of them are active anymore. This information is not particularly useful so Benjamin removed this column.
+The canonical url column provides the ends of a url, but no mention of the website being references. There is not any real value so Benjamin removed the
+canonical url column. County id is not particularly helpful since longitude and latitude values are already present. Benjamin removed the County id column. The column featured is mostly false and the column final is mostly true. Fuel type is mostly null. Benjamin removed featured, final and fuel type columns together. The percent contained column is all 100’s since all fires reported have been contained. Benjamin removed the percent contained column. The public data column has all TRUE values, so Benjamin removed it. The status column all finalized value so Benjamin removed it. All of the values in StructuresEvacuated were NA so Benjamin removed it. The UniqueId column makes no sense so Benjamin removed it. The update column provides no useful dates like started and extinguished so Benjamin removed it. 
 
 ```{r}
+library(readr)
+fire_dataset_Cleaning <- read_csv("California_Fire_Incidents.csv")
+#View(fire_dataset_Cleaning)
+
+fire_dataset_Cleaning <- fire_dataset_Cleaning[,-2]
+fire_dataset_Cleaning <- fire_dataset_Cleaning[,-6]
+fire_dataset_Cleaning <- fire_dataset_Cleaning[,-9]
+fire_dataset_Cleaning <- fire_dataset_Cleaning[,-14:-16]
+fire_dataset_Cleaning <- fire_dataset_Cleaning[,-21]
+fire_dataset_Cleaning <- fire_dataset_Cleaning[,-22]
+fire_dataset_Cleaning <- fire_dataset_Cleaning[,-25]
+fire_dataset_Cleaning <- fire_dataset_Cleaning[,-27]
+fire_dataset_Cleaning <- fire_dataset_Cleaning[,-28:-29]
 
 ```
 
+Benjamin moved the started column to be in front of the established column for clarity. Benjamin moved the name column to be the first column of the dataset for clarity. Benjamin moved the Longitude after the Latitude for clarity.  
+
+```{r}
+library(dplyr)
+fire_dataset_Cleaning <- fire_dataset_Cleaning %>% relocate(Started, .before = Extinguished)
+fire_dataset_Cleaning <- fire_dataset_Cleaning %>% relocate(Name, .before = AcresBurned)
+fire_dataset_Cleaning <- fire_dataset_Cleaning %>% relocate(Longitude, .before = Location)
+```
+In many of the columns, there were both NA values and numeric values. Benjamin decided to replace NA values with 0 since it is unclear what the true value of these observations might be. Please consider airtankers, crewsinvolved, dozers, engines, fatalities, helicopters, injuries, personnel involved, structures damaged, structures destroyed, structures threatened and water tenders with care.  
+
+```{r}
+library(tidyr)
+summary(fire_dataset_Cleaning$Started)
+min(fire_dataset_Cleaning$Started)
+min(fire_dataset_Cleaning$Extinguished)
+summary(fire_dataset_Cleaning$Extinguished)
+```
+------
+
+
+
+
+
+
+  
 ***
 #### Training a Model for Correlation:
 ```{r include=FALSE}

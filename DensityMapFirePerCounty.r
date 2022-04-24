@@ -18,19 +18,19 @@ setwd("C:/Users/Brandon Dora/Desktop/DataMining")
 #implementing Ben's cleaned dataset
  testFrame3 <- read.csv("California_Fire_Incidents.csv")
   
-  testFrame3 <- testFrame[,-2]
+  testFrame3 <- testFrame3[,-2]
   
-  testFrame3 <- testFrame[,-6]
+  testFrame3 <- testFrame3[,-6]
   
-  testFrame3 <- testFrame[,-9]
+  testFrame3 <- testFrame3[,-9]
   
-  testFrame3 <- testFrame[,-14:-16]
+  testFrame3 <- testFrame3[,-14:-16]
   
-  testFrame3 <- testFrame[,-21]
+  testFrame3 <- testFrame3[,-21]
  
-  testFrame3 <- testFrame[,-22]
+  testFrame3 <- testFrame3[,-22]
 
-  testFrame3 <- testFrame[,-25]
+  testFrame3 <- testFrame3[,-25]
   
   summary(testFrame3$StructuresEvacuated)
 

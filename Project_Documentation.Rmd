@@ -1,13 +1,12 @@
 ---
-title: "Project Spreadsheet? idk give me a better title lol"
-author: "Benjamin Garcia, Brandon Ly, Brandon Dora, Alejandro Cepeda"
-date: '2022-04-24'
+title: "California Wildfire Analysis"
+author: "Benjamin Garcia, Alejandro Cepeda, Brandon Ly, Brandon Dora"
+date: "`r Sys.Date()`"
 output: html_document
 ---
 
-------
-
-#### DataSet Cleaning:
+***
+#### Data Cleaning:
 All rows in active column are False because none of them are active anymore. This information is not particularly useful so Benjamin removed this column.
 The canonical url column provides the ends of a url, but no mention of the website being references. There is not any real value so Benjamin removed the
 canonical url column. County id is not particularly helpful since longitude and latitude values are already present. Benjamin removed the County id column. The column featured is mostly false and the column final is mostly true. Fuel type is mostly null. Benjamin removed featured, final and fuel type columns together. The percent contained column is all 100’s since all fires reported have been contained. Benjamin removed the percent contained column. The public data column has all TRUE values, so Benjamin removed it. The status column all finalized value so Benjamin removed it. All of the values in StructuresEvacuated were NA so Benjamin removed it. The UniqueId column makes no sense so Benjamin removed it. The update column provides no useful dates like started and extinguished so Benjamin removed it. 
@@ -26,7 +25,6 @@ fire_dataset_Cleaning <- fire_dataset_Cleaning[,-22]
 fire_dataset_Cleaning <- fire_dataset_Cleaning[,-25]
 fire_dataset_Cleaning <- fire_dataset_Cleaning[,-27]
 fire_dataset_Cleaning <- fire_dataset_Cleaning[,-28:-29]
-
 ```
 
 Benjamin moved the started column to be in front of the established column for clarity. Benjamin moved the name column to be the first column of the dataset for clarity. Benjamin moved the Longitude after the Latitude for clarity.  
@@ -37,6 +35,7 @@ fire_dataset_Cleaning <- fire_dataset_Cleaning %>% relocate(Started, .before = E
 fire_dataset_Cleaning <- fire_dataset_Cleaning %>% relocate(Name, .before = AcresBurned)
 fire_dataset_Cleaning <- fire_dataset_Cleaning %>% relocate(Longitude, .before = Location)
 ```
+
 In many of the columns, there were both NA values and numeric values. Benjamin decided to replace NA values with 0 since it is unclear what the true value of these observations might be. Please consider airtankers, crewsinvolved, dozers, engines, fatalities, helicopters, injuries, personnel involved, structures damaged, structures destroyed, structures threatened and water tenders with care.  
 
 ```{r}
@@ -46,17 +45,185 @@ min(fire_dataset_Cleaning$Started)
 min(fire_dataset_Cleaning$Extinguished)
 summary(fire_dataset_Cleaning$Extinguished)
 ```
-------
 
-
-
-
-
-
+***
+#### California Wildfire Shiny Web App:
+```{r echo=FALSE, message=FALSE}
+cleanFireData <- function() {
+  # Benjamin's cleaning script as a function for server use
+  testFrame <- read.csv("California_Fire_Incidents.csv")
+  testFrame <- testFrame[,-2]
+  testFrame <- testFrame[,-6]
+  testFrame <- testFrame[,-9]
+  testFrame <- testFrame[,-14:-16]
+  testFrame <- testFrame[,-21]
+  testFrame <- testFrame[,-22]
+  testFrame <- testFrame[,-25]
+  summary(testFrame$StructuresEvacuated)
+  testFrame <- testFrame[,-27]
+  summary(testFrame$StructuresThreatened)
+  testFrame <- testFrame[,-28:-29]
+  testFrame <- testFrame %>% relocate(Started, .before = Extinguished)
+  testFrame <- testFrame %>% relocate(Name, .before = AcresBurned)
+  testFrame <- testFrame %>% relocate(Longitude, .before = Location)
+  testFrame <- replace_na(testFrame, list(AirTankers = 0, CrewsInvolved = 0, Dozers = 0, Engines = 0, Fatalities = 0, Helicopters = 0, Injuries = 0, PersonnelInvolved = 0, StructuresDamaged = 0, StructuresDestroyed = 0, StructuresThreatened = 0, WaterTenders = 0))
   
+  return(testFrame)
+}
+```
+
+The following section is intended to interactively visualize the various variables available. The variables that Alejandro wants to focus on are the `AcresBurned` throughout the four seasons of the year. With the help of module 11's material, the process of developing and deploying the shiny web app was possible with the use of the `shiny` and `rsconnect` packages.
+
+```{r message=FALSE}
+# libraries
+#install.packages(c('shiny','shinythemes','thematic','tidyverse','lubridate','rsconnect'))
+library(shiny)
+library(shinythemes)
+library(thematic)
+library(tidyverse)
+library(lubridate)
+library(rsconnect)
+```
+
+Below, Alejandro has defined a UI with two separate tabs within the panel:
+
+-   The **scatter plot** will display the result of choosing between three variables, the number of **acres burned**, **fatalities**, and **injuries**. These variables will be options for the x-axis, y-axis, and dot size of the plot.
+
+-   The **bar graph** will instead visualize any trends in the number of acres burned, along with other observations, per each year. These will be separated by the season in which they occurred.
+
+```{r}
+# Define UI
+ui <- fluidPage(
+  theme = shinytheme("yeti"),
+  titlePanel("California Forest Fire Analysis"),
+  # set up two tab panels
+  tabsetPanel(
+    tabPanel("Scatter Plot", fluid = TRUE,
+             sidebarLayout(
+               # sidebar inputs for scatterplot
+               sidebarPanel(
+                 selectInput("var", "X-axis:",
+                             c("Acres Burned" = "AcresBurned",
+                               "# of Fatalities" = "Fatalities",
+                               "# Injured" = "Injuries"),
+                             selected = "AcresBurned"),
+                 selectInput("var1", "Y-axis:",
+                             c("Acres Burned" = "AcresBurned",
+                               "# of Fatalities" = "Fatalities",
+                               "# Injured" = "Injuries"),
+                             selected = "Injuries"),
+                 selectInput("var2", "Dot Size:",
+                             c("Acres Burned" = "AcresBurned",
+                               "# of Fatalities" = "Fatalities",
+                               "# Injured" = "Injuries"),
+                             selected = "Fatalities")
+              ),
+              mainPanel(
+                # display scatter plot in main panel
+                plotOutput("scatterplot"))
+              )
+    ),
+    tabPanel("Bar Graph", fluid = TRUE,
+             sidebarLayout(
+               # sidebar inputs for the bar graph
+               sidebarPanel(
+                 selectInput("var3", "X-axis:",
+                             c("Month" = "Month",
+                               "Year" = "Year"),
+                             selected = "Year"),
+                 selectInput("var4", "Y-axis:",
+                             c("Acres Burned" = "AcresBurned",
+                               "# of Fatalities" = "Fatalities",
+                               "# Injured" = "Injuries",
+                               "# of Structures Damaged" = "StructuresDamaged",
+                               "# of Structures Destroyed" = "StructuresDestroyed"),
+                             selected = "AcresBurned")),
+               mainPanel(
+                 plotOutput("bargraph"))
+            )
+    )
+  )
+)
+```
+
+Inside the `server` function, Alejandro also included some extra wrangling to the data to fit his needs. After this, he proceed to create the scatter plot and bar graph visualizations displaying the inputs available for selection.
+
+```{r}
+# server logic containing data prep and plotting for the app
+server <- function(input, output) {
+  # run Ben's data cleaning script plus further cleaning for my needs
+  fire_df <- cleanFireData() %>%
+    select(AcresBurned, CalFireIncident, Started, Extinguished, 
+           Fatalities, Injuries, StructuresDamaged, StructuresDestroyed) %>%
+    mutate(AcresBurned = as.numeric(AcresBurned),
+           Started = as.Date(Started, "%Y-%m-%d"),
+           Extinguished = as.Date(Extinguished, "%Y-%m-%d")) %>%
+    mutate(Month = month(Started, label=TRUE), Year = year(Started)) %>%
+    filter(Year != 1969) %>% # remove Year outliers found in data set
+    select(-c(Started, Extinguished))
+  
+  # convert 0 and NAs to the mean of AcresBurned  
+  fire_df$AcresBurned[fire_df$AcresBurned == 0] <- NA
+  fire_df$AcresBurned[is.na(fire_df$AcresBurned)] <- mean(fire_df$AcresBurned, 
+                                                          na.rm = TRUE)
+  # create season variable for scatter plot color use joined with original data frame
+  fire_df$Month <- as.numeric(fire_df$Month)
+  
+  # setting month range by seasons
+  spring <- c(03,04,05)
+  fall <- c(09,10,11)
+  summer <- c(06,07,08)
+  winter <- c(12,01,02)
+  # seasons df to join with existing df
+  seasons <- data.frame(
+    Season = c("spring","spring","spring", "fall","fall","fall", 
+               "summer","summer","summer", "winter","winter","winter"),
+    Month = c(spring, fall, summer, winter)
+  )
+  # joining seasons by month
+  fire_df <- fire_df %>%
+    full_join(seasons, fire_df, by = "Month") %>%
+    # setting variables to desired format
+    mutate(Month = month(Month, label=TRUE),
+           Season = as.factor(Season))
+  
+  # scatter plot showing the desired inputs
+  output$scatterplot <- renderPlot(
+    ggplot(fire_df, aes(x=fire_df[,input$var], y=fire_df[,input$var1])) +
+      geom_point(aes(color=Season, size=fire_df[,input$var2])) +
+      labs(title=paste(input$var1, "vs.", input$var),
+           x=paste(input$var), y=paste(input$var1), 
+           size=paste(input$var2)) +
+      scale_x_continuous(labels = scales::comma)
+  )
+  
+  # bar graph of the desired inputs
+  output$bargraph <- renderPlot(
+    ggplot(fire_df, aes(x=as.factor(fire_df[,input$var3]), 
+                        y=fire_df[,input$var4], fill=Season)) +
+      geom_bar(position="dodge", stat="identity", width=0.7) +
+      labs(title=paste(input$var4, "by", input$var3),
+           x=paste(input$var3), y=paste(input$var4)) +
+      scale_y_continuous(labels = scales::comma)
+  )
+}
+
+# set plot theme to minimal
+theme_set(theme_minimal())
+# have the shiny theme match the ggplot theme
+thematic_shiny()
+
+# deploy the app
+#deployApp()
+
+# Run the app
+shinyApp(ui = ui, server = server)
+```
+The shiny app shows that there may not be a correlation with the season how intense a California wildfire can get. Although there is a noticeable trend during the summer season throughout the years 2013-2019, the wildfires during the fall season in 2017 says otherwise.
+
 ***
 #### Training a Model for Correlation:
-```{r include=FALSE}
+```{r message=FALSE}
 #Using my data:
 library(dplyr)
 library(e1071)
@@ -81,7 +248,7 @@ data$seasons <- as.numeric(data$month)
 
 #Creating a separate df for seasons
 spring <- c(03, 04, 05)
-fall <- c(09, 10 , 11)
+fall <- c(09, 10, 11)
 summer <- c(06, 07, 08)
 winter <- c(12, 01, 02)
 
@@ -129,7 +296,7 @@ which season of the year.
 
 
 Using ggplot, we could find if there are any correlations to be made:
-```{r echo=FALSE}
+```{r}
 ggplot(data_fin, aes(x = Day, 
                      y = AcresBurned, 
                      color = season)) +
@@ -170,7 +337,7 @@ algorithm to accurately predict the season, if the model could predict the
 seasons with high accuracy then there would be a significance in season to the 
 size of the fire.  
 
-Using the smv() function from the e1071 library, we could use the smv algorithm 
+Using the svm() function from the e1071 library, we could use the smv algorithm 
 to predict the seasons using classification.  
 
 ```{r}
@@ -179,6 +346,7 @@ svm_model <- svm(season ~., data = train)
 svm_model
 
 ```
+
 ```{r echo=FALSE}
 #Predicting dataset to compare with test dataset
 svm_pred_season <- predict(svm_model, test, cost = 100, gamma = .01)
@@ -197,12 +365,6 @@ seasons and size of fire.
 
 ***
 #### Brandon Dora's Part:
-
-```{r}
-
-```
-
-#### Alejandro's Part:
 
 ```{r}
 

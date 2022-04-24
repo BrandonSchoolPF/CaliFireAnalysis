@@ -440,7 +440,7 @@ library(remotes)
 For the portion below, Brandon Dora had decided to create a density map similar 
 to the ones that we had created prior in week 4 of Introduction to Data Mining.
 
-```
+```{r}
 
 #implementing Ben's cleaned dataset using alejandro's inner portion of his function
  testFrame3 <- read.csv("California_Fire_Incidents.csv")
@@ -499,7 +499,7 @@ californiaCounties$lat = NULL
 The reasoning behind creating a new dataframe for this, was to be able to seamlessly consolidate the name's of each county in California,
 while also being able to log the number of times a fire had occured in each county. This way, we are able to join our dataframe, with the newly created "californiaCounties" dataframe listed above. There are many other ways to do this, but for the method he had chosen it was simply because it made for
 a much more seamless process, and turned out to be more time effective. 
-```
+```{r}
 
 
 testFrame2 <- table(testFrame3$Counties)
@@ -519,7 +519,7 @@ californiaCounties[is.na(californiaCounties)] = 0
 ```
 As shown above, joining the two dataframes together allowed for us to easily combine the data we needed, while not having any complications whatsoever. 
 
-```
+```{r}
 
 
 # creating our state map
@@ -533,7 +533,7 @@ caliFire
 ```
 The reasoning behind plotting a map displaying counties first, was to get a good idea of what we are working with,
 while also creating a base that we will be placing our density map on top of. 
-```
+```{r}
 
 ### adding our data and creating our 2d density map on top our previously created map.
 
@@ -547,7 +547,7 @@ caliFire2d
 ```
 As you can see, our density map is properly displaying our Two-Dimensional density map, where we can 
 easily see by county where more often than not fires had occured. 
-```
+```{r}
 
 
 
